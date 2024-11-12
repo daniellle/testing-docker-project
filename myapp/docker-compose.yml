@@ -11,20 +11,26 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_HOST=db
-      - DATABASE_USER=myuser
-      - DATABASE_PASSWORD=mypassword
-      - DATABASE_NAME=mydb
+      - DATABASE_HOST=postgres
+      - DATABASE_USER=testco
+      - DATABASE_PASSWORD=development
+      - DATABASE_NAME=postgres
+    networks:
+      - custom_network
 
   db:
-    image: "postgres:111.6-alpine"  # Non-existent PostgreSQL version
+    image: "postgres:12-3.1"
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydb
+      POSTGRES_USER: testco
+      POSTGRES_PASSWORD: development
+      POSTGRES_DB: postgres
     ports:
-      - "5434:5434"
+      - "5432"
     volumes:
-      - db-data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - non_existent_network  # An undefined network to trigger an error
 
+networks:
+  custom_network:
+    driver: bridge
